@@ -1,5 +1,9 @@
-# LoRa Transmitter with ESP32-S3
-### Modules : ESP32-S3-N16R8 + LoRa Ra-01
+# LoRa-TX : Transmitter with ESP32-S3
+## Module use :
+### 1. ESP32-S3-N16R8
+![WhatsApp Image 2025-05-11 at 23 16 03_c43a9188](https://github.com/user-attachments/assets/7a96e4a9-bcb0-421e-bf54-0e8a605342a3)
+### 2. LoRa Ra-01 (433mhz)
+![LORA](https://github.com/user-attachments/assets/5f3af303-5f3d-44d7-9a77-7d96ffbe4a60)
 
 This project implements a simple LoRa transmitter using the ESP32-S3 microcontroller and the LoRa module (typically an SX127x based module). The transmitter sends messages in a loop, with a 20-second delay between each message. The system also utilizes a built-in LED to indicate the transmission status.
 
