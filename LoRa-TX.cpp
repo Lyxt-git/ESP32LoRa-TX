@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 #include <SPI.h>
 #include <LoRa.h>
 
-// Custom pin mapping for transmitter, depend onyour pinouts
+// Custom pin mapping for transmitter, depend on your pinouts
 #define LORA_SCK    48  // GPIO48
 #define LORA_MISO   45  // GPIO45
 #define LORA_MOSI   35  // GPIO35
@@ -32,15 +32,31 @@ THE SOFTWARE.*/
 #define LORA_DIO0   20  // GPIO20
 
 #define STATUS_LED  2   // Built-in LED (GPIO2)
+#define TEST_SPI_DATA 0xAA
 
 int messageIndex = 0;
 
 // List of messages to send
-String messages[] = {"Hello  ESP32-S3Central"};
+String messages[] = {"Hello ESP32-S3Central"};
 
 void setup() {
   Serial.begin(115200);
   while (!Serial);
+
+  Serial.println(".");
+  delay(1000);
+  Serial.println("..");
+  delay(1000);
+  Serial.println("...");
+  delay(2000);
+  Serial.println("================================");
+  Serial.println("=== Booting LoRa Transmitter ===");
+  Serial.println("================================");
+  delay(2000);
+  Serial.println("Loading ....");
+  delay(10000);
+  diagnostic_gpio();     // GPIO state check
+  test_spi();            // Optional SPI communication check
 
   pinMode(STATUS_LED, OUTPUT);
   digitalWrite(STATUS_LED, LOW);
@@ -74,7 +90,13 @@ void setup() {
     }
   }
 
-  Serial.println("LoRa Transmitter Ready, the message will send each 20  second.");
+  Serial.println("===================================================");
+  Serial.println("Transmitting, the message will send each 20 second.");
+  Serial.println("===================================================");
+  delay(2000);
+  Serial.println("Data send from a list ....");
+  delay(1000);
+  Serial.println("");
   digitalWrite(STATUS_LED, HIGH);
 }
 
@@ -96,4 +118,80 @@ void loop() {
   digitalWrite(STATUS_LED, HIGH);
 
   delay(20000);  // Send every 20 seconds
+}
+
+// GPIO Diagnostic
+void diagnostic_gpio() {
+  Serial.println("");
+  Serial.println("Performing GPIO diagnostic...");
+  delay(3000);
+  check_gpio(LORA_SCK, "SCK");
+  delay(750);
+  check_gpio(LORA_MISO, "MISO");
+  delay(750);
+  check_gpio(LORA_MOSI, "MOSI");
+  delay(750);
+  check_gpio(LORA_SS, "NSS");
+  delay(750);
+  check_gpio(LORA_RST, "RST");
+  delay(750);
+  check_gpio(LORA_DIO0, "DIO0");
+  delay(1000);
+  Serial.println("GPIO diagnostic completed.");
+  Serial.println("");
+  delay(2000);
+}
+
+void check_gpio(int pin, const char* pinName) {
+  pinMode(pin, INPUT);
+  int state = digitalRead(pin);
+  Serial.print(pinName);
+  Serial.print(" pin is ");
+  Serial.println(state == LOW ? "LOW (correct)" : "HIGH (unexpected)");
+}
+
+// SPI Communication Test
+void test_spi() {
+  Serial.println("Testing SPI communication...");
+  delay(5000);
+  uint8_t received = 0;
+
+  pinMode(LORA_SS, OUTPUT);
+  digitalWrite(LORA_SS, HIGH);
+
+  SPI.beginTransaction(SPISettings(100000, MSBFIRST, SPI_MODE0));  // Slow for stability
+  digitalWrite(LORA_SS, LOW);
+  received = SPI.transfer(TEST_SPI_DATA);
+  digitalWrite(LORA_SS, HIGH);
+  SPI.endTransaction();
+
+  Serial.print("Sent: 0x");
+  Serial.print(TEST_SPI_DATA, HEX);
+  Serial.print(" | Received: 0x");
+  Serial.println(received, HEX);
+
+  if (received != 0x00 && received != TEST_SPI_DATA) {
+    delay(5000);
+    Serial.println("SPI communication looks active.");
+  } else {
+    delay(5000);
+    Serial.println("SPI communication failed. Check 'Unexpected' wiring Issue.");
+    delay(3000);
+    Serial.println("Diagnose completed, Press Reset Button to Re-Diagnose.");
+    Serial.println("======================================================");
+    delay(5000);
+    Serial.println("Transmitting is starting in 5 second .....");
+    Serial.println("5");
+    delay(1000);
+    Serial.println("4");
+    delay(1000);
+    Serial.println("3");
+    delay(1000);
+    Serial.println("2");
+    delay(1000);
+    Serial.println("1");
+    Serial.println("");
+    delay(1000);
+
+  }
 }
