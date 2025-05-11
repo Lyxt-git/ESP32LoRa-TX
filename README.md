@@ -65,17 +65,6 @@ This project uses the following custom pin mappings for the LoRa module:
 - The LED on GPIO2 blinks to indicate that a message is being transmitted.
 - You can easily modify the list of messages by editing the `messages[]` array in the code.
 
-## Message Customization
-
-To customize the messages, you can modify the `messages[]` array in the `setup()` function. For example:
-
-```cpp
-String messages[] = {
-  "Hello from ESP32-S3!",
-  "This is a test message",
-  "Send more messages here"
-};
-
 ## License
 
 This project is open-source and released under the [MIT License](https://mit-license.org/).
