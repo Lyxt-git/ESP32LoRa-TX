@@ -75,3 +75,7 @@ String messages[] = {
   "This is a test message",
   "Send more messages here"
 };
+
+## License
+
+This project is open-source and released under the [MIT License](https://mit-license.org/).
